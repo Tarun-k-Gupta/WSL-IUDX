@@ -1,0 +1,43 @@
+{% extends 'default.html' %}
+{% load static %}
+
+{% block content %}
+<div class="obg-page-container">
+    <div id="obgForm" class="obg-form">
+        <div class="obg-form-content">
+            <div class="obligation-container">
+                <form action="/obligation-portal" method="post">
+                    {% csrf_token %}
+                    <br>
+                    <h2><u>OBLIGATION FORM</u></h2>
+                    <br>
+                    <p>Please fullfil the following obligations:</p>
+                    <br>
+                    {% for obg in obligations %}
+                    <label class="obligation-label" for="{{obg}}">{{obg}}</label>
+                    <input class="input-obligation" id="{{obg}}" name="{{obg}}" type="text" placeholder="Type text here"
+                        required>
+                    <br>
+                    {% endfor %}
+                    <button class="submit-btn" type="submit">
+                        SUBMIT
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- {% for role in role_cond_list %}
+<p>{{role}}</p>
+{% endfor %} -->
+{% if evaluated_policies %}
+{% for key,value in evaluated_policies.items %}
+<p>{{key}} : {{value}}</p>
+{% endfor %}
+<br><br>
+{% for remark in remarks %}
+<p><b>{{remark}}</b></p>
+{% endfor %}
+{% endif %}
+
+{% endblock %}

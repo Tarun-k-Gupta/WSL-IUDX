@@ -1,0 +1,27 @@
+<html>
+    <h2>You are in {{ apd_name }}</h2>>
+    <h3> The policies applicable to this APD are, </h3>
+    <table>
+      <tr>
+          <th>Condition</th>
+          <th>Action</th>
+          <th>Event</th>
+          <th>Artifact</th>
+          <th>Event Type</th>
+          <th>Modality</th>
+      </tr>
+      {% for i in all_policy %}
+      <tr>
+          <td>{{i.condition}}</td>
+          <td>{{i.action}}</td>
+          <td>{{i.event}}</td>
+          <td>{{i.artifact}}</td>
+          <td>{{i.event_type}}</td>
+          <td>{{i.modality}}</td>
+  
+      </tr>
+      {% endfor %}
+  </table>
+</html>
+
+

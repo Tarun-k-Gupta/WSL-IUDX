@@ -1,0 +1,72 @@
+{% extends 'default.html' %}
+{% load static %}
+
+{% block content %}
+<div class="welcome-page-header">
+    <img align="left" src="{% static 'img/IUDX_logo.jpg' %}" alt="logo" class="logo" />
+    <div class="icons navbar-items">
+        <div class="logout-icon" onclick="logout()">Logout&nbsp;<i class="bi bi-box-arrow-right"></i></div>
+    </div>
+</div>
+<div>
+    <h1 class="welcome-header" style="background-color: rgba(217, 217, 217, 1);">{{apd_name}}</h1>
+</div>
+<div class="consent-container">
+    <div class="consent-table">
+        <h2 class="apd-resource-heading">JURISDICITON DASHBOARD</h2>
+        <br>
+        <table id="myTable" border="3" width="100%" height="40%">
+            <thead>
+                <tr>
+                    <th style="text-align: center;">JURISDICITON NAME</th>
+                    <th style="text-align: center;">FUNCTION</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for key,value in apd_jurisdictions.items %}
+                <tr>
+                    <td>{{key}}</td>
+                    {% if value %}
+                    <td>
+                        <form action="/apd/{{apd_name}}/jurisdiction_dashboard" method="post">
+                            {% csrf_token %}
+                            <label for="jurisdiction" style="display: none;"></label>
+                            <input type="text" name="jurisdiction" id="jurisdiction" value="{{key}}:remove" style="display: none;">
+                            <button type="submit" class="request-btn" id="{{key}}">REMOVE</button>
+                        </form>
+                    </td>
+                    {% else %}
+                    <td>
+                        <form action="/apd/{{apd_name}}/jurisdiction_dashboard" method="post">
+                            {% csrf_token %}
+                            <label for="jurisdiction" style="display: none;"></label>
+                            <input type="text" name="jurisdiction" id="jurisdiction" value="{{key}}:add" style="display: none;">
+                            <button type="submit" class="request-btn" id="{{key}}">ADD</button>
+                        </form>
+                    </td>
+                    {% endif %}
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+<div class="footer">
+    Copyright &copy; 2023 WSL, IIIT Bangalore
+</div>
+
+<script>
+    function logout() {
+        window.location.href = "/";
+    }
+</script>
+<script src="https://code.jquery.com/jquery-3.6.3.js" integrity="sha256-nQLuAZGRRcILA+6dMBOvcRh5Pe310sBpanc6+QBmyVM="
+    crossorigin="anonymous"></script>
+<script src="//cdn.datatables.net/1.13.1/js/jquery.dataTables.min.js"></script>
+<script>
+    $(document).ready(function () {
+        $('#myTable').DataTable();
+    });
+</script>
+
+{% endblock %}

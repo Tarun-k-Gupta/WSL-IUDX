@@ -1,0 +1,54 @@
+{% extends 'default.html' %}
+{% load static %}
+
+    {% block content %}
+    <div class="welcome-page-header">
+        <img align="left" src="{% static 'img/IUDX_logo.jpg' %}" alt="logo" class="logo"/>
+        <div class="icons navbar-items">
+            <div class="logout-icon" onclick="logout()">Logout&nbsp;<i class="bi bi-box-arrow-right"></i></div>
+        </div>
+    </div>
+    <div>
+        <h1 class="welcome-header" style="background-color: rgba(217, 217, 217, 1);">{{apd_name}}</h1>
+    </div>
+    <div class="consent-container">
+        <div class="consent-table">
+            <h2 class="apd-resource-heading">CONSENT DASHBOARD</h2>
+            <br>
+            <table border="3" width="100%" height="50%">
+                <tr>
+                    <th>ID</th>
+                    <th>DOCUMENT NAME</th>
+                    <th>CONSENT ARTEFACT</th>
+                    <th>USER ACCESS</th>
+                </tr>
+                {% for resource in resources %}
+                <tr>
+                    <td>{{resource.id}}</td>
+                    <td>{{resource.document_name}}</td>
+                    {% if resource.consent_artefact %}
+                    <td>Consent Artifact is present</td>
+                    {% else %}
+                    <td>consent artifact is not present</td>
+                    {% endif %}
+                    {% if resource.consent_artefact %}
+                    <td>Given</td>
+                    {% else %}
+                    <td>Denied</td>
+                    {% endif %}
+                </tr>
+                {% endfor %}
+            </table>
+        </div>
+    </div>
+    <div class="footer">
+        Copyright &copy; 2023 WSL, IIIT Bangalore
+    </div>
+
+    <script>
+        function logout() {
+            window.location.href = "/";
+        }
+    </script>
+
+    {% endblock %}

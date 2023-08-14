@@ -1,0 +1,56 @@
+{% extends 'default.html' %}
+{% load static %}
+
+    {% block content %}
+    <div class="welcome-page-header">
+        <img align="left" src="{% static 'img/IUDX_logo.jpg' %}" alt="logo" class="logo"/>
+        <div class="icons navbar-items">
+            <div class="logout-icon" onclick="logout()">Logout&nbsp;<i class="bi bi-box-arrow-right"></i></div>
+        </div>
+    </div>
+    <h1 class="welcome-header">Welcome {{ username }}!</h1>
+    <div class="welcome-container">
+        <div class="welcome-container-heading">
+            <span style="font-size: 1.5rem">
+                <strong>Your APDs</strong>
+            </span>
+        </div>
+        {% if user_apds %}
+        <div class="cards-container">
+            {% for key,value in user_apds.items %}
+            <a class="apd-link">
+                <div class="card" id="iiitb">
+                    <h3 class="card-heading">{{key}}</h3>
+                    <p class="card-description">Lorem, ipsum dolor sit amet consectetur adipisicing elit. Fugit, error quasi?</p>
+                    <button class="view-apd-btn" id="{{key}}" onClick="viewAPD(this.id)">
+                        VIEW APD
+                    </button>
+                </div>
+            </a>
+            <!-- <div class="card" id="iiitb" >
+                <h3 class="card-heading">IIITH</h3>
+                <p class="card-description">Lorem ipsum dolor sit amet consectetur adipisicing elit. Omnis velit quasi officia consequatur nobis aut doloribus! Illo earum sapiente nesciunt consequuntur?</p>
+            </div>
+            <div class="card" id="iiitb" >
+                <h3 class="card-heading">SRM-KTR</h3>
+                <p class="card-description">Lorem ipsum dolor sit amet, consectetur adipisicing elit. Modi quis cumque maxime. Repellendus!</p>
+            </div> -->
+            {% endfor %}
+        </div>
+        {% endif %}
+    </div>
+
+    <div class="footer">
+        Copyright &copy; 2023 WSL, IIIT Bangalore
+    </div>
+
+    <script>
+        function viewAPD(apd_name) {
+            window.location.href = `/apd/${apd_name}`;
+        }
+        function logout() {
+            window.location.href = "/";
+        }
+    </script>
+
+    {% endblock %}

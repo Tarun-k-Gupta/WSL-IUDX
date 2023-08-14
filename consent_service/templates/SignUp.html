@@ -1,0 +1,58 @@
+{% extends 'default.html' %}
+{% load static %}
+
+    {% block content %}
+
+    <div class="header">
+        <img align="left" src="{% static 'img/IUDX_logo.jpg' %}" alt="logo" class="logo"/>
+    </div>
+    <div class="container">
+        <form class="signup-form" action="/signup" method="post">
+            {% csrf_token %}
+            <div class="form-headers">
+                <h1><u>SIGN UP</u></h1>
+            </div>
+            <div class="error-message" style="color: red;">
+                {% for error in errors%}
+                <p>{{error}}</p>
+                {% endfor %}
+            </div>
+            <div class="form-input">
+                <label>FIRST NAME : </label>
+                <input type="text" placeholder="Abc" name="firstname" required />
+            </div>
+            <div class="form-input">
+                <label>LAST NAME : </label>
+                <input type="text" placeholder="Xyz" name="lastname" required />
+            </div>
+            <div class="form-input">
+                <label>USERNAME : </label>
+                <input type="text" placeholder="Abc_Xyz" name="username" required />
+            </div>
+            <div class="form-input">
+                <label>EMAIL ID : </label>
+                <input type="email" placeholder="abc@example.com" name="email" required />
+            </div>
+            <div class="form-input">
+                <label>PASSWORD : </label>
+                <input type="password" placeholder="abc&123" name="password" required />
+            </div>
+            <div class="form-input">
+                <label>CONFIRM PASSWORD : </label>
+                <input type="password" placeholder="abc&123" name="cpassword" required />
+            </div>
+            <button class="submit-btn" type="submit">
+                Sign Up
+            </button>
+            <hr style="width:80%;text-align:left;margin-left:0">
+            <br>
+            <a href="/">Already have an account? </a>
+            <br>
+        </form>
+    </div>
+    <script>
+        document.body.style.backgroundColor = "white";
+    </script>
+
+    
+    {% endblock %}

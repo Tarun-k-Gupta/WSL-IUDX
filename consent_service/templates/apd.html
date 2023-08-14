@@ -1,0 +1,167 @@
+{% extends 'default.html' %}
+{% load static %}
+
+    {% block content %}
+
+    <div class="welcome-page-header">
+        <img align="left" src="{% static 'img/IUDX_logo.jpg' %}" alt="logo" class="logo"/>
+        <div class="icons navbar-items">
+            <div class="logout-icon" onclick="logout()">Logout&nbsp;<i class="bi bi-box-arrow-right"></i></div>
+        </div>
+    </div>
+    {% if chosen_role %}
+    <div class="grouped-header">
+        <div>
+        <h1 class="welcome-header">{{apd_name}} - Role : {{chosen_role}} </h1>
+        </div>
+        <form class="role-dropdown dropdown-content" action="/apd/{{apd_name}}" method="post">
+            {% csrf_token %}
+            <label  for="role">Choose a role:</label>
+            <select name="role" id="role">
+                {% for role in user_roles %}
+                <option value="{{role}}">{{role}}</option>
+                {% endfor %}
+            </select>
+            <input type="submit" value="Go" class="go-role" style="background-color: #ccc; color: black;">
+        </form>
+    </div>
+    {% else %}
+    <div class="grouped-header">
+        <div>
+        <h1 class="welcome-header">{{apd_name}}</h1>
+        </div>
+        <form class="role-dropdown dropdown-content" action="/apd/{{apd_name}}" method="post">
+            {% csrf_token %}
+            <label  for="role">Choose a role:</label>
+            <select name="role" id="role">
+                {% for role in user_roles %}
+                <option value="{{role}}">{{role}}</option>
+                {% endfor %}
+            </select>
+            <input type="submit" value="Go" class="go-role" style="background-color: #ccc; color: black;">
+        </form>
+    </div>
+    {% endif %}
+    {% if chosen_role %}
+    {% if chosen_role == 'admin' %}
+    <div class="admin-btns">
+        <a href="/apd/{{apd_name}}/consent_dashboard">
+            <button class="admin-role">
+                VIEW CONSENT
+            </button>
+        </a>
+        <a href="/apd/{{apd_name}}/policy_dashboard">
+            <button class="admin-role">
+                MODIFY POLICY
+            </button>
+        </a>
+        <a href="/apd/{{apd_name}}/role_dashboard">
+            <button class="admin-role">
+                ROLE MANAGEMENT
+            </button>
+        </a>
+        <a href="/apd/{{apd_name}}/jurisdiction_dashboard">
+            <button class="admin-role">
+                JURISDICTION MANAGEMENT
+            </button>
+        </a>
+    </div>
+    {% endif %}
+    {% endif %}
+    <div class="apd-container">
+        <div class="apd-about">
+            <h2 class="apd-about-heading">ABOUT</h2>
+            <br>
+            <div class="apd-about-text">
+                <p>
+                    Lorem ipsum dolor sit amet consectetur, adipisicing elit. Nobis itaque ad aliquid illo explicabo perferendis numquam obcaecati quo voluptates eos perspiciatis inventore, animi exercitationem aut distinctio corrupti autem impedit, doloribus ipsa labore saepe officia recusandae neque maxime. Quisquam, consectetur repellendus provident consequuntur natus assumenda, obcaecati ex vero error eligendi id.
+                </p>
+            </div>
+        </div>
+        <div class="apd-resource">
+            <h2 class="apd-resource-heading">RESOURCES</h2>
+            <br>
+            <table border="3" width="100%" >
+                <tr>
+                    <th style="width:25%">NAME</th>
+                    <th style="width:25%">REQUEST</th>
+                    <th style="width:25%">ACCESS</th>
+                    <th style="width:25%">APPLICABLE POLICY</th>
+                </tr>
+                {% for i in resources %}
+                <tr>
+                    <td>{{i.document_name}}</td>
+                    <td>
+                        {% if chosen_role %}
+                        <button class="request-btn" type="submit" name="{{i.document_name}}" id="{{i.id}}" onClick="requestResource(this.name)">Request</button>
+                        {% else %}
+                        <button class="request-btn disabled-btn" id="{{i.id}}" disabled>Request</button>
+                        {% endif %}
+                    </td>
+                    <td>
+                        <button class="access-btn disabled-btn" id="{{i.id}}">Access</button>
+                    </td>
+                    <td><button class="request-btn" type="submit" id="{{i.id}}" name="{{i.document_name}}" onClick="applicable_policy(this.name)">Applicable Policies</button></td>
+                </tr>
+                {% endfor %}
+            </table>
+        </div>
+    </div>
+    <div id="popupForm" class="popup-form">
+        <div class="popup-form-content">
+            <div class="obligation-container">
+            <form action="/apd/{{apd_name}}" method="post">
+                {% csrf_token %}
+                <br>
+                <h2><u>CONFIRMATION</u></h2>
+                <br>
+                <p>Please confirm the following</p>
+                <br>
+                <label class="obligation-label" for="role_capacity">Role:</label>
+                <input class="input-obligation" id="role_capacity" name="role_capacity" value="{{chosen_role}}" type="text" readonly="true">
+                <br>
+                <label class="obligation-label" for="res_info">Resource:</label>
+                <input class="input-obligation" id="res_info" name="res_info" value="" type="text" readonly="true">
+                <br>
+                <button class="submit-btn" type="submit">
+                    CONFIRM
+                </button>
+            </form>
+            </div>
+        </div>
+    </div>
+
+    <div class="footer">
+        Copyright &copy; 2023 WSL, IIIT Bangalore
+    </div>
+
+
+    <script>
+        function logout() {
+            window.location.href = "/";
+        }
+        const popupForm = document.getElementById('popupForm');
+        const resInfo = document.getElementById('res_info');
+
+        function requestResource(name){
+            console.log("Showing the confirmation form for " , name);
+            resInfo.value = name
+            popupForm.style.display = 'block';
+        };
+        window.addEventListener('click', function (event) {
+            if (event.target == popupForm) {
+                popupForm.style.display = 'none';
+            }
+            if (event.target == statementsForm) {
+                statementsForm.style.display = 'none';
+            }
+        });
+        function applicable_policy(name){
+            // console.log("Showing the applicable policy statements for " , name);
+            // resInfo.value = name
+            // statementsForm.style.display = 'block';
+            window.location.href =`/applicable_policy/${name}`;
+        };
+    </script>
+
+    {% endblock %}

@@ -1,0 +1,41 @@
+{% extends 'default.html' %}
+{% load static %}
+
+    {% block content %}
+
+    <div class="header">
+        <img align="left" src="{% static 'img/IUDX_logo.jpg' %}" alt="logo" class="logo"/>
+    </div>
+    <div class="container">
+        <form class="signup-form" action="/" method="post" autocomplete="off">
+            {% csrf_token %}
+            <div class="form-headers">
+                <h1><u>SIGN IN</u></h1>
+            </div>
+            <div class="error-message" style="color: red;">
+                {% for error in errors%}
+                <p>{{error}}</p>
+                {% endfor %}
+            </div>
+            <div class="form-input">
+                <label>USERNAME : </label>
+                <input type="text" placeholder="Abc Xyz" name="username" required />
+            </div>
+            <div class="form-input">
+                <label>PASSWORD : </label>
+                <input type="password" placeholder="abc&123" name="password" required />
+            </div>
+            <button class="submit-btn" type="submit">
+                LOGIN
+            </button>
+            <hr style="width:80%;text-align:left;margin-left:0">
+            <br>
+            <a href="/signup">Don't have an account?</a>
+            <hr>
+        </form>
+    </div>
+    <script>
+        document.body.style.backgroundColor = "white";
+    </script>
+
+    {% endblock %}

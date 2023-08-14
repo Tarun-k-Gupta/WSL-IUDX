@@ -1,0 +1,113 @@
+{% extends 'default.html' %}
+{% load static %}
+
+{% block content %}
+<div class="welcome-page-header">
+    <img align="left" src="{% static 'img/IUDX_logo.jpg' %}" alt="logo" class="logo" />
+    <div class="icons navbar-items">
+        <div class="logout-icon" onclick="logout()">Logout&nbsp;<i class="bi bi-box-arrow-right"></i></div>
+    </div>
+</div>
+<div>
+    <h1 class="welcome-header" style="background-color: rgba(217, 217, 217, 1);">{{apd_name}}</h1>
+    {% if message %}
+    <br>
+    <h5>{{message}}</h5>
+    {% endif %}
+</div>
+<div class="consent-container">
+    <div class="consent-table">
+        <h2 class="apd-resource-heading">ROLE MANAGEMENT</h2>
+        <br>
+        <table id="myTable" border="3" width="100%" height="40%">
+            <thead>
+                <tr>
+                    <th>USER ID</th>
+                    <th>USER NAME</th>
+                    <th>USER ROLES</th>
+                    <th>MODIFY ROLE</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for i,j,k in user_list %}
+                <tr>
+                    <td>{{i}}</td>
+                    <td>{{j}}</td>
+                    <td>{{k}}</td>
+                    <td>
+                        <button class="request-btn" id="{{i}}" onClick="AssignnRole(this.id)">ASSIGN</button>
+                        <button class="access-btn" id="{{i}}" onClick="DeAssignnRole(this.id)">DEASSIGN</button>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+<div id="popupForm" class="popup-form">
+    <div class="popup-form-content">
+        <span class="close">&times;</span>
+        <div class="obligation-container">
+            <form action="/apd/{{apd_name}}/role_dashboard" method="post">
+                {% csrf_token %}
+                <br>
+                <h2><u>MODIFY ROLE</u></h2>
+                <br>
+                <label class="obligation-label" for="form_type">Funtion:</label>
+                <input class="input-obligation" name="form_type" id="form_type" type="text" value="" readonly>
+                <br>
+                <label class="obligation-label" for="user_id">User Id:</label>
+                <input class="input-obligation" type="text" name="user_id" id="user_id" value="" readonly>
+                <br>
+                <label class="obligation-label" for="role">Role:</label>
+                <select class="input-obligation" name="role" id="role">
+                {% for role in apd_roles %}
+                <option value="{{role}}">{{role}}</option>
+                {% endfor %}
+                </select>
+                <button class="submit-btn" type="submit">
+                    MODIFY
+                </button>
+            </form>
+        </div>
+    </div>
+</div>
+<div class="footer">
+    Copyright &copy; 2023 WSL, IIIT Bangalore
+</div>
+
+<script>
+    function logout() {
+        window.location.href = "/";
+    }
+    
+    const popupForm = document.getElementById('popupForm');
+    const formType = document.getElementById('form_type')
+    const userId = document.getElementById('user_id')
+
+    function AssignnRole(id){
+        console.log("Showing the role assignment form for user-id" , id);
+        formType.value = 'Assign'
+        userId.value = id
+        popupForm.style.display = 'block';
+    };
+    function DeAssignnRole(id){
+        console.log("Showing the role assignment form for user-id" , id);
+        formType.value = 'DeAssign'
+        userId.value = id
+        popupForm.style.display = 'block';
+    };
+    const closeButton = document.getElementsByClassName('close')[0];
+    closeButton.addEventListener('click', function () {
+        popupForm.style.display = 'none';
+    });
+</script>
+<script src="https://code.jquery.com/jquery-3.6.3.js" integrity="sha256-nQLuAZGRRcILA+6dMBOvcRh5Pe310sBpanc6+QBmyVM=" crossorigin="anonymous"></script>
+<script src="//cdn.datatables.net/1.13.1/js/jquery.dataTables.min.js"></script>
+<script>
+    $(document).ready(function() {
+        $('#myTable').DataTable();
+    });
+</script>
+
+{% endblock %}

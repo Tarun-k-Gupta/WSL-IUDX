@@ -1,0 +1,41 @@
+<?xml version="1.0" ?>
+<Consent xmlns="http://meity.gov.in" timestamp="Tue Aug  8 19:50:48 2023">
+ <DataRequester value=" " type="URI" event="REVOKE">
+  <Notify/>
+  <Role>academic</Role>
+ </DataRequester>
+ <DataProvider>
+  <Notify/>
+ </DataProvider>
+ <Revoker/>
+ <Data-Items>
+  <Data type="Document" tag="['public_research_data']" resource_id="5">
+   <preCondition>True</preCondition>
+   <postCondition>
+    <P>
+     <cond>reques:has:payment_id; request:match:payment_id:id_num; request:match:role:academic; artifact:has_tag:public_research_data; artifact:time.validity&gt;now()</cond>
+     <action>access_artifact</action>
+    </P>
+    <O>
+     <cond>request:not_match:payment_id:id_num; request:match:role:academic; artifact:has_tag:public_research_data;</cond>
+     <action>make_payment(request,apd,artifact)</action>
+    </O>
+   </postCondition>
+  </Data>
+  <ConsentValidity value="" unit="">
+   <!--how long can consumer is allowed to store data-->
+  </ConsentValidity>
+ </Data-Items>
+ <Purpose>
+   
+  <!--Purpose attributes-->
+ </Purpose>
+ <Signature>
+   
+  <!--User Signature Block-->
+ </Signature>
+ <Signature>
+   
+  <!--Consent Collector Signature Block-->
+ </Signature>
+</Consent>

@@ -1,0 +1,25 @@
+<html>
+  <div class="Output" style="display: flex; gap: 50px;">
+    <div class="condition-output">
+      <strong style="color: orange;">Condition Checking Output:</strong>
+      {% for key,value in obg_tracker.items %}
+        <br><em>{{key}} : {{value}}</em>
+      {% endfor %}
+    </div>
+    <div class="policy-ouput">
+      <strong style="color: orange;">Policy Checking Output:</strong>
+      {% for key,value in policy_evaluation.items %}
+        <br><em>{{key}} : {{value}}</em>
+      {% endfor %}
+    </div>
+    <form>
+      <h4><u>Please fulfill the follwing obligations</u></h4>
+      {% for i in instructions %}
+        <label class="obligation-label" for="{{ i }}"><em>{{i}} :</em></label><br>
+        <input type="text" id="{{ i }}" name="obligation"><br>
+      {% endfor %}
+    </form>
+  </div>
+</html>
+
+

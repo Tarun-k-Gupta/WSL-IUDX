@@ -1,0 +1,115 @@
+@csrf_exempt
+def check_policy(request, APD_name):
+    
+    all_policies = PolicyBigTable.objects.filter(apd_name=APD_name)
+    obligs = {}
+    mandate.current_APD = APD_name
+    obj = mandate()
+    for i in all_policies.iterator():
+        obj.policy_ids.append(i.id)
+        
+        if i.modality == "P":
+            string = i.condition.split()[0].replace('"', "").replace("role","").replace("==","")
+            obj.permitted_roles.append(string)
+        elif i.modality == "F":
+            string = i.condition.split()[0].replace('"', "").replace("role","").replace("==","")
+            obj.forbidden_roles.append(string)
+        elif i.modality == "O":
+        
+            string = i.predicate
+            cond = i.condition
+            temp_str = ""
+            for i in string.split(";"):
+                for j in range(len(i.split(":"))):
+                    obj.predicate_constituents[i.split(":")[0]] = i.split(":")[
+                        1]
+
+            body_unicode = request.body.decode('utf-8')
+            body = json.loads(body_unicode)
+            print(obj.predicate_constituents)
+            temp_request = False
+            for i in obj.predicate_constituents.keys():
+                if(i == "request"):
+                    for j in body.keys():
+                        if(obj.predicate_constituents[i] == j):
+                            temp_request = True
+
+            if(temp_request):
+                obj.obligation_tracker[obj.predicate_constituents["request"]] = True
+                print(obj.obligation_tracker)
+                obj.accessible_resources += eval(
+                    obj.predicate_constituents["resource"])
+                string = cond.split()[0].replace('"', "").replace("role","").replace("==","")
+                obj.obligation_role.append(string)
+
+                
+            else:
+                obj.obligation_tracker[obj.predicate_constituents["request"]] = False 
+    return obj
+
+def access_resource(request, role_capacity, apd_name, res_id):
+    #filter policies by role capacity, check the predicates (check_policy), check if obligation fulfilled then add role to allowed_roles list
+    obj = check_policy(request, apd_name)
+    
+    # print(obj.permitted_roles)
+    # print(obj.forbidden_roles)
+    # print(obj.obligation_role)
+
+    auth = request.META['HTTP_AUTHORIZATION'].split()
+    auth_decoded = base64.b64decode(auth[1]).decode("utf-8")
+    username, password = auth_decoded.split(":")
+    user = authenticate(username=username, password=password)
+    user_roles = []
+    
+    if (user is not None):
+        all_users = User.objects.get(username=username)
+        all_users_role_info = user_role_info.objects.filter(user_id = all_users.id)
+        
+        for i in all_users_role_info.iterator():
+            user_roles.extend(i.role.strip("][").replace("'","").split(', '))
+    
+    #match role apd with resource apd to see if he is trying to access the resource
+        final_roles = obj.permitted_roles + obj.obligation_role
+        temp_ctr = 0
+
+        for i in obj.accessible_resources:
+            if i.id == int(res_id):
+                temp_ctr = 1
+                if(role_capacity in user_roles) and (role_capacity in final_roles) and (role_capacity not in obj.forbidden_roles):
+                    consent_template = create_consent_template(obj.policy_ids,res_id)
+                    res = Resource.objects.get(id=res_id)
+                    res.consent_artefact = consent_template
+                    res.save()
+                    return HttpResponse("Resource "+res_id+" Accessible", status=201)
+                else:
+                    return HttpResponse("Role Not Found", status=403)
+        if (temp_ctr == 0):
+            return HttpResponse("Resource Not Found/ Not Accessible", status=404)
+            
+    else:
+        return HttpResponse("Wrong Credentials for resource access", status=403)
+        
+        
+
+
+def has_tag(tag):
+    all_resources = Resource.objects.filter(resource_apd=mandate.current_APD)
+    filtered_resources = []
+    for i in all_resources.iterator():
+        for j in i.resource_inode.keys():
+            if(j == tag):
+                filtered_resources.append(i)
+    print(filtered_resources)
+    return filtered_resources
+
+
+
+Models.py 
+class PolicyBigTable(models.Model):
+    apd_name = models.TextField(max_length=1000)
+    modality = models.TextField(max_length=1000)
+    predicate = models.TextField(max_length=1000)
+    condition = models.TextField(max_length=1000)
+    condition_type = models.TextField(null=True,max_length=1000)
+    action = models.TextField(null=True,max_length=1000)
+    RegulationSource = models.TextField(null=True, max_length=1000)

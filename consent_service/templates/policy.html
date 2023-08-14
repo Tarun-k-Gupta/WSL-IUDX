@@ -1,0 +1,101 @@
+{% extends 'default.html' %}
+{% load static %}
+
+    {% block content %}
+    <div class="welcome-page-header">
+        <img align="left" src="{% static 'img/IUDX_logo.jpg' %}" alt="logo" class="logo"/>
+        <div class="icons navbar-items">
+            <div class="logout-icon" onclick="logout()">Logout&nbsp;<i class="bi bi-box-arrow-right"></i></div>
+        </div>
+    </div>
+    <div>
+        <h1 class="welcome-header" style="background-color: rgba(217, 217, 217, 1);">{{apd_name}}</h1>
+    </div>
+    <div class="consent-container">
+        <div class="admin-policy-table">
+            <h2 class="apd-resource-heading">POLICIES MODIFICATION</h2>
+            <br>
+            <table  border="3">
+                <tr>
+                    <th>ID</th>
+                    <th>EVENT</th>
+                    <th>CONDITION</th>
+                    <th>ACTION</th>
+                    <th>MODALITY</th>
+                    <th>ARTIFACT</th>
+                    <th>MODIFY</th>
+                </tr>
+                {% for policy in policies %}
+                <tr>
+                    <td>{{policy.id}}</td>
+                    <td>{{policy.event}}</td>
+                    <td>{{policy.condition}}</td>
+                    <td>{{policy.action}}</td>
+                    <td>{{policy.modality}}</td>
+                    <td>{{policy.artifact}}</td>
+                    <td>
+                        <form action="/apd/{{apd_name}}/policy_dashboard" method="post">
+                            {% csrf_token %}
+                            <label for="policy-id" style="display: none;">Id: </label>
+                            <input type="number" name="policy-id" id="policy-id" value="{{policy.id}}" style="display: none;">
+                            <button type="submit" class="request-btn" id="{{policy.id}}">EDIT</button>
+                        </form>
+                    </td>
+                </tr>
+                {% endfor %}
+            </table>
+        </div>
+    </div>
+    {% if policy_id %}
+    <div id="popupForm" class="popup-form" style="display: block;"> 
+        <div class="popup-form-content">
+            <span class="close">&times;</span>
+            <div class="obligation-container">
+            <form action="/apd/{{apd_name}}/policy_dashboard" method="post">
+                {% csrf_token %}
+                <br>
+                <h2><u>EDIT POLICY</u></span></h2>
+                <br>
+                <label class="obligation-label" for="id">Policy Id: </label>
+                <input class="input-obligation" type="text" name="id" id="id" value="{{selected_policy.id}}" readonly>
+                <br>
+                <label class="obligation-label" for="condition">Condition: </label>
+                <input class="input-obligation" type="text" name="condition" id="condition" value="{{selected_policy.condition}}" required>
+                <br>
+                <label class="obligation-label" for="action">Action: </label>
+                <input class="input-obligation" type="text" name="action" id="action" value="{{selected_policy.action}}" required>
+                <br>
+                <label class="obligation-label" for="artifact">Artifact: </label>
+                <input class="input-obligation" type="text" name="artifact" id="artifact" value="{{selected_policy.artifact}}" readonly>
+                <br>
+                <label class="obligation-label" for="event_type">Event Type: </label>
+                <input class="input-obligation" type="text" name="event_type" id="event_type" value="{{selected_policy.event_type}}" required>
+                <br>
+                <label class="obligation-label" for="modality">Modality: </label>
+                <input class="input-obligation" type="text" name="modality" id="modality" value="{{selected_policy.modality}}" required>
+                <br>
+                <button class="submit-btn" type="submit">
+                    EDIT POLICY
+                </button>
+            </form>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+    <div class="footer">
+        Copyright &copy; 2023 WSL, IIIT Bangalore
+    </div>
+
+    <script>
+        function logout() {
+            window.location.href = "/";
+        }
+        const popupForm = document.getElementById('popupForm');
+
+        const closeButton = document.getElementsByClassName('close')[0];
+        closeButton.addEventListener('click', function () {
+            popupForm.style.display = 'none';
+        });
+    </script>
+
+    {% endblock %}

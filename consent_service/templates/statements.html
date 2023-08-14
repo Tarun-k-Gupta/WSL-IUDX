@@ -1,0 +1,61 @@
+{% extends 'default.html' %}
+{% load static %}
+
+{% block content %}
+<div class="obg-page-container">
+    <div id="obgForm" class="obg-form">
+        <div class="obg-form-content">
+            <div class="obligation-container">
+                <form action="/obligation-portal" method="post">
+                    {% csrf_token %}
+                    <br>
+                    <h2><u>Policies applicable on this artefact</u></h2>
+                    <table border="3" width="100%" >
+                        <th>Policy</th>
+                        <!-- <th>Modality</th> -->
+                   
+                    <br>
+                    {% for i in policies %}
+                    <tr>
+                        <td>{{i.statements}}</td>
+                        <!-- <td style="text-align: center">{{i.modality}}</td> -->
+                    </tr>
+                    <br>
+                
+                    {% endfor %}
+                </table>
+                    <!-- <table>
+                        <th>Statements</th>
+                        <th>Modality</th>
+                        
+                        <tr>
+                            {% for i in policies %}
+                            <td><label class="obligation-label" for="{{obg}}">{{i}}</label></table></td>
+                            {% endfor %}
+                            {% for j in modalities %}
+                            <td><label class="obligation-label" for="{{obg}}">{{j}}</label></table></td>
+                            {% endfor %}
+                        </tr> -->
+                        
+                    
+                    <br>
+                    
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- {% for role in role_cond_list %}
+<p>{{role}}</p>
+{% endfor %} -->
+<!-- {% if evaluated_policies %}
+{% for key,value in evaluated_policies.items %}
+<p>{{key}} : {{value}}</p>
+{% endfor %}
+<br><br>
+{% for remark in remarks %}
+<p><b>{{remark}}</b></p>
+{% endfor %}
+{% endif %} -->
+
+{% endblock %}
